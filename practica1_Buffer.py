@@ -4,10 +4,10 @@ from multiprocessing import Manager
 from random import randint
 from math import inf
 
-limInf = 10 #Número mínimo de números que puede generar un productor
-limSup = 20 #Número máximo de números que puede generar un productor
-NProd = 3 #Número de productores
-NBuffer = 5 #Tamaño del buffer en el que los productores pueden alamcenar losdatos
+limInf = 5 #Número mínimo de números que puede generar un productor
+limSup = 15 #Número máximo de números que puede generar un productor
+NProd = 5  #Número de productores
+NBuffer = 3 #Tamaño del buffer en el que los productores pueden alamcenar losdatos
 
 def productor(pid, almacen, NoLLeno, Completo):
     dato = 0
@@ -47,7 +47,7 @@ def consumidor(almacen, NoLLeno, Completo, solucion):
         S.acquire()
     while any(i[0] != -1 for i in almacen):
         try:
-            minimo = indice_min(almacen) #Selecciona el menor y hace lasmodifiaciones
+            minimo = indice_min(almacen) #Selecciona el menor y hace las modifiaciones
             dato = almacen[minimo].pop(0)
             if not almacen[minimo]:
                 almacen[minimo].append(-2)
@@ -69,7 +69,7 @@ def main():
     for pid in range(NProd):
         almacen.append(manager.list())
         almacen[pid].append(-2) #Cuando se vacia una lista se coloca un -2 para ser coherente con el enunciado
-        NoLLeno.append(Semaphore(NProd))
+        NoLLeno.append(Semaphore(NBuffer))
         Completo.append(Semaphore(0))
         Productores.append(Process(target= productor, name = f"productor {pid}",
                                     args = [pid,almacen,NoLLeno,Completo]))
